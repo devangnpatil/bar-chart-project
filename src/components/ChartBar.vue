@@ -1,12 +1,12 @@
 <template>
-  <div class="chart-bar-wrapper">
+  <div class="chart-bar-wrapper" v-bind:style="setHeightWidthToChart">
     <div class="chart-bar-section">
         <div class="bar-section">
             <div v-tooltip.top=" `${bar.value}`" class="bar" v-for="bar in chartBarData" :style="{height: ((bar.value/calculateRange)*30) +'px', background: bar.color}">
               <span class="bar-name">{{bar.name}}</span>
             </div>
         </div>
-        <div class="y-axis-section" :style="{height:'300px'}">
+        <div class="y-axis-section" v-bind:style="chartHeightObject">
           <div class="y-axis-line-data" v-for="range in rangeArray">
             <div class="y-axis-value" :data-range="range"></div>
             <span class="y-dash"></span>
@@ -18,9 +18,9 @@
 </template>
 
 <script>
-
+import { bus } from '../main';
 import { VTooltip } from 'v-tooltip'
-
+import { debuglog } from 'util';
 export default {
   name: 'ChartBar',
   props: {
@@ -29,17 +29,19 @@ export default {
   data(){
     return {
       rangeArray:[],
-      maxHeight: '',
-      calculateRange:''
-    }
-  },
-  computed:{
-    setBarHeight: function(){
+      calculateRange:'',
+      chartHeightObject:{
+        height:'300px'
+      },
+      setHeightWidthToChart:{
+        height:'',
+        width: ''
+      }
     }
   },
   methods:{
     setYAxis(){
-      let maxValue = Math.max.apply(Math, this.chartBarData.map(function(item) { return item.value; }))
+      let maxValue = Math.max.apply(null, this.chartBarData.map(function(item) { return item.value; }))
       let calculateRange = Math.floor(maxValue/10);
       this.calculateRange = calculateRange
       for(let i=0; i<=10; i++){
@@ -49,7 +51,19 @@ export default {
   },
   mounted(){
     this.setYAxis()
-  }
+  },
+
+  created(){
+        bus.$on('chartDataChange', (data) => {
+          this.setHeightWidthToChart.height = data.height + '%';
+          this.setHeightWidthToChart.width = data.width + '%';
+          this.chartHeightObject.height = data.height + '%';
+          // this.calculateRange = data.height
+          console.log(this.chartHeightObject.height);
+        });
+
+        
+    }
 }
 </script>
 
@@ -102,7 +116,7 @@ export default {
   position: absolute;
   bottom: -1em;
   margin: -1em;
-  font-size: 0.5em;
+  font-size: 1em;
 }
 
 .y-axis-section{
@@ -138,7 +152,6 @@ export default {
   padding: 5px;
   right: -36px
 }
-
 /* .y-axis-line-data::after{
   content: 'True'
 } */
