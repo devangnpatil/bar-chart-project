@@ -2,7 +2,8 @@
   <div class="chart-bar-wrapper" v-bind:style="setHeightWidthToChart">
     <div class="chart-bar-section">
         <div class="bar-section">
-            <div v-tooltip.top=" `${bar.value}`" class="bar" v-for="bar in chartBarData" :style="{height: ((bar.value/calculateRange)*30) +'px', background: bar.color}">
+            <!-- <div v-tooltip.top=" `${bar.value}`" class="bar" v-for="bar in chartBarData" :style="{height: ((bar.value/calculateRange)*30) +'px', background: bar.color}"> -->
+            <div :data-tooltip="`${bar.value}`" class="bar" v-for="bar in chartBarData" :style="{height: ((bar.value/calculateRange)*30) +'px', background: bar.color}">
               <span class="bar-name">{{bar.name}}</span>
             </div>
         </div>
@@ -19,7 +20,7 @@
 
 <script>
 import { bus } from '../main';
-import { VTooltip } from 'v-tooltip'
+// import { VTooltip } from 'v-tooltip'
 import { debuglog } from 'util';
 export default {
   name: 'ChartBar',
@@ -74,7 +75,7 @@ export default {
 }
 
 .chart-bar-wrapper{
-  width: 100%;
+  width: 90%;
   max-height: 500px;
   margin: 20px auto;
   border: 1px solid black;
@@ -155,5 +156,85 @@ export default {
 /* .y-axis-line-data::after{
   content: 'True'
 } */
+
+.bar-section::after{
+    content: "Player Name";
+    padding: 10px;
+    position: absolute;
+    bottom: -6em;
+    font-weight:  bold;
+}
+
+.chart-bar-section::after{
+    content: "Runs";
+    padding: 10px;
+    position: absolute;
+    top: 50%;
+    left: -7em;
+    font-weight:  bold;
+    transform: rotate(-90deg);
+}
+
+/* Tool tip */
+
+[data-tooltip] {
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+}
+
+/* Hide the tooltip content by default */
+[data-tooltip]:before,
+[data-tooltip]:after {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Position tooltip above the element */
+[data-tooltip]:before {
+  position: absolute;
+  bottom: 100%;
+  left: 100%;
+  margin-bottom: 5px;
+  margin-left: -100px;
+  padding: 7px;
+  width: 100px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background-color: #000;
+  background-color: hsla(0, 0%, 20%, 0.9);
+  color: #fff;
+  content: attr(data-tooltip);
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+/* Triangle hack to make tooltip look like a speech bubble */
+[data-tooltip]:after {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5px;
+  width: 0;
+  border-top: 5px solid #000;
+  border-top: 5px solid hsla(0, 0%, 20%, 0.9);
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  content: " ";
+  font-size: 0;
+  line-height: 0;
+}
+
+/* Show tooltip content on hover */
+[data-tooltip]:hover:before,
+[data-tooltip]:hover:after {
+  visibility: visible;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+  filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
+  opacity: 1;
+}
 
 </style>

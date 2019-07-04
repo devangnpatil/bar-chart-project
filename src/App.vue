@@ -14,9 +14,9 @@
       <hr />
     </div> -->
     <div class="large-size">
-      <h3>Large Size</h3>
+      <h3>Player Chart</h3>
       <ChartBar :chartBarData="chartBar"/>
-      <hr />
+      <!-- <hr /> -->
     </div>
   </div>
 </template>
